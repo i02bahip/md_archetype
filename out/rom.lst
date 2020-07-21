@@ -1,0 +1,161 @@
+000000                      include 'header.asm'
+                        ; ******************************************************************
+                        ; 68000 Vector Table
+                        ;{******************************************************************
+000000 00FFFF00         	dc.l   	0x00FFFF00			; Initial stack pointer value
+000004 000001F8         	dc.l   	EntryPoint      	; Start of program
+000008 0000023E         	dc.l   	Exception       	; Bus error
+00000C 0000023E         	dc.l   	Exception       	; Address error
+000010 0000023E         	dc.l   	Exception       	; Illegal instruction
+000014 0000023E         	dc.l   	Exception       	; Division by zero
+000018 0000023E         	dc.l   	Exception       	; CHK exception
+00001C 0000023E         	dc.l   	Exception       	; TRAPV exception
+000020 0000023E         	dc.l   	Exception       	; Privilege violation
+000024 0000023E         	dc.l   	Exception       	; TRACE exception
+000028 0000023E         	dc.l   	Exception       	; Line-A emulator
+00002C 0000023E         	dc.l   	Exception       	; Line-F emulator
+000030 0000023E         	dc.l   	Exception       	; Unused (reserved)
+000034 0000023E         	dc.l   	Exception       	; Unused (reserved)
+000038 0000023E         	dc.l   	Exception       	; Unused (reserved)
+00003C 0000023E         	dc.l   	Exception       	; Unused (reserved)
+000040 0000023E         	dc.l   	Exception       	; Unused (reserved)
+000044 0000023E         	dc.l   	Exception       	; Unused (reserved)
+000048 0000023E         	dc.l   	Exception       	; Unused (reserved)
+00004C 0000023E         	dc.l   	Exception       	; Unused (reserved)
+000050 0000023E         	dc.l   	Exception       	; Unused (reserved)
+000054 0000023E         	dc.l   	Exception       	; Unused (reserved)
+000058 0000023E         	dc.l   	Exception       	; Unused (reserved)
+00005C 0000023E         	dc.l   	Exception       	; Unused (reserved)
+000060 0000023E         	dc.l   	Exception       	; Spurious exception
+000064 0000023E         	dc.l   	Exception       	; IRQ level 1
+000068 0000023E         	dc.l   	Exception    	; IRQ level 2 (external interrupt)
+00006C 0000023E         	dc.l   	Exception       	; IRQ level 3
+000070 0000023C         	dc.l   	HBlankInterrupt 	; IRQ level 4 (horizontal retrace interrupt)
+000074 0000023E         	dc.l   	Exception       	; IRQ level 5
+000078 0000023C         	dc.l   	VBlankInterrupt 	; IRQ level 6 (vertical retrace interrupt)
+00007C 0000023E         	dc.l   	Exception       	; IRQ level 7
+000080 0000023E         	dc.l   	Exception       	; TRAP #00 exception
+000084 0000023E         	dc.l   	Exception       	; TRAP #01 exception
+000088 0000023E         	dc.l   	Exception       	; TRAP #02 exception
+00008C 0000023E         	dc.l   	Exception       	; TRAP #03 exception
+000090 0000023E         	dc.l   	Exception       	; TRAP #04 exception
+000094 0000023E         	dc.l   	Exception       	; TRAP #05 exception
+000098 0000023E         	dc.l   	Exception       	; TRAP #06 exception
+00009C 0000023E         	dc.l   	Exception       	; TRAP #07 exception
+0000A0 0000023E         	dc.l   	Exception       	; TRAP #08 exception
+0000A4 0000023E         	dc.l   	Exception       	; TRAP #09 exception
+0000A8 0000023E         	dc.l   	Exception       	; TRAP #10 exception
+0000AC 0000023E         	dc.l   	Exception       	; TRAP #11 exception
+0000B0 0000023E         	dc.l   	Exception       	; TRAP #12 exception
+0000B4 0000023E         	dc.l   	Exception       	; TRAP #13 exception
+0000B8 0000023E         	dc.l   	Exception       	; TRAP #14 exception
+0000BC 0000023E         	dc.l   	Exception       	; TRAP #15 exception
+0000C0 0000023E         	dc.l   	Exception       	; Unused (reserved)
+0000C4 0000023E         	dc.l   	Exception       	; Unused (reserved)
+0000C8 0000023E         	dc.l   	Exception       	; Unused (reserved)
+0000CC 0000023E         	dc.l   	Exception       	; Unused (reserved)
+0000D0 0000023E         	dc.l   	Exception       	; Unused (reserved)
+0000D4 0000023E         	dc.l   	Exception       	; Unused (reserved)
+0000D8 0000023E         	dc.l   	Exception       	; Unused (reserved)
+0000DC 0000023E         	dc.l   	Exception       	; Unused (reserved)
+0000E0 0000023E         	dc.l   	Exception       	; Unused (reserved)
+0000E4 0000023E         	dc.l   	Exception       	; Unused (reserved)
+0000E8 0000023E         	dc.l   	Exception       	; Unused (reserved)
+0000EC 0000023E         	dc.l   	Exception       	; Unused (reserved)
+0000F0 0000023E         	dc.l   	Exception       	; Unused (reserved)
+0000F4 0000023E         	dc.l   	Exception       	; Unused (reserved)
+0000F8 0000023E         	dc.l   	Exception       	; Unused (reserved)
+0000FC 0000023E         	dc.l   	Exception       	; Unused (reserved)
+                        ;}******************************************************************
+
+                        ; ******************************************************************
+                        ; Genesis ROM Info
+                        ;{******************************************************************
+                        ;	size     012345678901234567890123456789012345678901234567
+000100 534547412047454E 	dc.b 	"SEGA GENESIS    "									; Console name - 16
+000108 4553495320202020
+000110 2843296462202020 	dc.b 	"(C)db   2016.MAR"									; Copyright holder and release date - 16
+000118 323031362E4D4152
+000120 444220464F4E5453 	dc.b 	"DB FONTS AND ASCII TUTORIAL                     "	; Domestic name - 48
+000128 20414E4420415343
+000130 4949205455544F52
+000138 49414C2020202020
+000140 2020202020202020
+000148 2020202020202020
+000150 444220464F4E5453 	dc.b 	"DB FONTS AND ASCII                      "	; International name - 48
+000158 20414E4420415343
+000160 4949202020202020
+000168 2020202020202020
+000170 2020202020202020
+000178 474D20494E545554 	dc.b 	"GM INTUTORL-05"									; Version number - 48
+000180 4F524C2D3035
+000186 1234             	dc.w 	0x1234												; Checksum
+000188 4A20202020202020 	dc.b 	"J               "									; I/O support - 16
+000190 2020202020202020
+000198 00000000         	dc.l 	0x00000000											; Start address of ROM
+00019C 00000254         	dc.l 	__end												; End address of ROM
+0001A0 00FF0000         	dc.l 	0x00FF0000											; Start address of RAM
+0001A4 00FFFFFF         	dc.l 	0x00FFFFFF											; End address of RAM
+0001A8 00000000         	dc.l 	0x00000000											; SRAM enabled
+0001AC 00000000         	dc.l 	0x00000000											; Unused
+0001B0 00000000         	dc.l 	0x00000000											; Start address of SRAM
+0001B4 00000000         	dc.l 	0x00000000											; End address of SRAM
+0001B8 00000000         	dc.l 	0x00000000											; Unused
+0001BC 00000000         	dc.l 	0x00000000											; Unused
+0001C0 2020202020202020 	dc.b 	"                                        "			; Notes (unused)
+0001C8 2020202020202020
+0001D0 2020202020202020
+0001D8 2020202020202020
+0001E0 2020202020202020
+0001E8 4A55452020202020 	dc.b 	"JUE             "									; Country codes
+0001F0 2020202020202020
+                        ;}******************************************************************
+
+0001F8                  EntryPoint:
+                        ;---- CHECK THE RESET BUTTONS
+0001F8 4A79 00A10008        tst.w 0x00A10008  ; Test mystery reset (expansion port reset?)
+main.asm:6: *** Warning:  Short branch could be used here ***
+0001FE 6600 0042            bne Main          ; Branch if Not Equal (to zero) - to Main
+000202 4A79 00A1000C        tst.w 0x00A1000C  ; Test reset button
+main.asm:8: *** Warning:  Short branch could be used here ***
+000208 6600 0038            bne Main          ; Branch if Not Equal (to zero) - to Main
+
+                        ;---- CLEAR THE RAM	
+00020C 203C 00000000        move.l #0x00000000, d0     ; Place a 0 into d0, ready to copy to each longword of RAM
+000212 207C 00000000        move.l #0x00000000, a0     ; Starting from address 0x0, clearing backwards
+000218 223C 00003FFF        move.l #0x00003FFF, d1     ; Clearing 64k's worth of longwords (minus 1, for the loop to be correct)
+00021E                  .Clear:
+00021E 2100                 move.l d0, -(a0)           ; Decrement the address by 1 longword, before moving the zero from d0 to it
+000220 51C9 FFFC            dbra d1, .Clear            ; Decrement d0, repeat until depleted
+
+                        ;---- TRADE MARK SECURITY SIGNATURE
+000224 1039 00A10001        move.b 0x00A10001, d0      ; Move Megadrive hardware version to d0
+00022A 0200 000F            andi.b #0x0F, d0           ; The version is stored in last four bits, so mask it with 0F
+main.asm:21: *** Warning:  Short branch could be used here ***
+00022E 6700 000C            beq Skip                  ; If version is equal to 0, skip TMSS signature
+000232 23FC 53454741        move.l #'SEGA', 0x00A14000 ; Move the string "SEGA" to 0xA14000
+000238 00A14000
+00023C                  Skip:
+
+00023C                  HBlankInterrupt:
+00023C                  VBlankInterrupt:
+00023C 4E73                 rte   ; Return from Exception
+00023E                  Exception:
+00023E 4E72 2700           	stop 	#0x2700
+
+000242                  Main:
+000242 4EF9 00000248    	jmp __main
+000248                  __main:
+000248                  	include 'mainProgram.asm'
+000248                  Loop:
+000248 203C 0000000F        move.l #0xF, d0 ; Move 15 into register d0
+00024E 2200                 move.l d0, d1   ; Move contents of register d0 into d1
+000250 4EF8 0248            jmp Loop        ; Jump back up to 'Loop'
+000254                  __end    ; Very last line, end of ROM address
+
+00000 Total Error(s)
+
+ENTRYPOINT         000001F8    ENTRYPOINT.CLEAR   0000021E    EXCEPTION          0000023E
+HBLANKINTERRUPT    0000023C    LOOP               00000248    MAIN               00000242
+SKIP               0000023C    VBLANKINTERRUPT    0000023C    __END              00000254
+__MAIN             00000248

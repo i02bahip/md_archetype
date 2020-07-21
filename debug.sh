@@ -1,0 +1,1 @@
+mame genesis -cart out/rom.bin -debug
