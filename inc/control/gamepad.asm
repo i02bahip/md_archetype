@@ -1,21 +1,26 @@
-ReadPad1:
-	; d7 (w) - Return result (00SA0000 00CBRLDU)
-	;move.b  pad_data_a, d7     ; Read upper byte from data port
-	;rol.w   #0x8, d7           ; Move to upper byte of d7
-	;move.b  #0x40, pad_data_a  ; Write bit 7 to data port
-	;move.b  pad_data_a, d7     ; Read lower byte from data port
-	;move.b  #0x00, pad_data_a  ; Put data port back to normal
-
-	;rts
-	move.l	#pad_data_a, A0			; load data_1 address
-	move.l	#joy1State, A1			; point to RAM placeholder for joystate
-	move.b	(A0), D7				; read status j1 = 00CBRLDU
+ReadPads:
+	move.l	#pad_data_b, A0			; load data_2 address
+	move.b	#$40, (A0)				; set TH high for next pass
+	move.l	#ram_joy1State, A1		; point to RAM placeholder for joystate and wait for the bus to synchronize at the same time
+	move.b	(A0), D7				; read status j2 = ??CBRLDU
 	move.b 	#$00, (A0)				; set TH low
-	nop								; wait to settle
-	move.b  (A0), D5				; read status = 00SA00DU
+	andi.b	#$3F, D7				; Do D7.b = 00CBRLDU and wait for the bus to synchronize at the same time
+	move.b  (A0), D5				; read status  = 00SA00DU
 	rol.b	#2, D5					; SA00DU??
 	andi.b	#$C0, D5				; SA000000
-	or.b	D5, D7					; D7 = SACBRLDU
+	or.b	D5, D7					; D7.b = SACBRLDU j2
+	;-------------- End of J2 data recollect
+	move.l	#pad_data_a, A0			; load data_2 address
 	move.b	#$40, (A0)				; set TH high for next pass
-	move.w	D7, (A1)				; store to RAM
+	swap	D7						; move j2 to high word in D7 and wait for the bus to synchronize at the same time
+	move.b	(A0), D7				; read status j1 = ??CBRLDU	
+	move.b 	#$00, (A0)				; set TH low
+	andi.b	#$3F, D7				; Do D7.b = 00CBRLDU and wait for the bus to synchronize at the same time
+	move.b  (A0), D5				; read status  = 00SA00DU
+	rol.b	#2, D5					; SA00DU??
+	andi.b	#$C0, D5				; SA000000
+	or.b	D5, D7					; D7.b = SACBRLDU j1
+	;-------------- End of J1 data recollect
+	move.b	#$40, (A0)				; set TH high for next pass
+	move.l	D7, (A1)				; store j2 and j1 data to RAM -> (High byte J2) -> SACBRLDU (Low byte J1) -> SACBRLDU
 	rts

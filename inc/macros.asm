@@ -68,3 +68,7 @@ BuildSpriteStructure: macro x_pos,	; X pos on sprite plane
 	move.w #(\priority_bit<<14|\palette_id<<13|\flip_x<<11|\flip_y<<10|\tile_id), \reg3
 	move.w #x_pos, \reg4
 	endm
+
+;DrawSprite: macro x_pos,
+;	y_pos,
+;	speed

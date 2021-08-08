@@ -309,7 +309,9 @@ CPU_EntryPoint:
 
 ; Vertical interrupt - run once per frame (50hz in PAL, 60hz in NTSC)
 INT_VInterrupt:
-	
+	;Get in 
+	move.w vdp_control, ram_vdp_control	; Read VDP status register
+
 	; Fetch the current scroll values from RAM.
 	;
 	; These labels are just named offsets from 0x00FF0000 (start of RAM)
@@ -360,22 +362,16 @@ INT_VInterrupt:
 	SetVRAMWrite vram_addr_hscroll_b
 	move.w d3, vdp_data
 
-	;-----------------------------------
-
-	; Fetch current sprite coordinates from RAM
-	;move.w ram_sprite_1_pos_x, d4
-	;move.w ram_sprite_1_pos_y, d5
-	move.w ram_sprite_2_pos_x, d2
-	move.w ram_sprite_2_pos_y, d3
-
 	; ************************************
 	; Read gamepad input
 	; d6 -> sprite speed
 	; d4 -> X pos
 	; d5 -> Y pos
+	;#pad2_buttons_offset
 	; ************************************
-	jsr     ReadPad1              ; Read pad 1 state, result in d0
+	jsr     ReadPads              ; Read pads state, result in d0
 
+	;---------- J1 PAD ACTIONS -------------
 	move.l  #0x1, d6              ; Default sprite move speed speed
 
 	btst    #pad_button_a, d7     ; Check A button
@@ -418,17 +414,60 @@ INT_VInterrupt:
 	sub.w   d6, ram_sprite_1_pos_y                ; Decrement sprite Y pos
 	@NoUp:
 
+	;---------- J2 PAD ACTIONS -------------
+	move.l  #0x1, d6              ; Default sprite move speed speed
+
+	btst    #(pad2_buttons_offset+pad_button_a), d7     ; Check A button
+	bne     @No2A                  ; Branch if button off
+	move.l  #0x2, d6              ; Double sprite move speed speed
+	@No2A:
+
+	btst    #(pad2_buttons_offset+pad_button_b), d7     ; Check B button
+	bne     @No2B                  ; Branch if button off
+	move.l  #0x2, d6              ; triple sprite move speed speed
+	@No2B:
+
+	btst    #(pad2_buttons_offset+pad_button_c), d7     ; Check C button
+	bne     @No2C                  ; Branch if button off
+	move.l  #0x2, d6              ; *4 sprite move speed speed
+	@No2C:
+
+	btst    #(pad2_buttons_offset+pad_button_start), d7 ; Check start button
+	bne     @No2Start              ; Branch if button off
+	move.l  #0x2, d6              ; Double sprite move speed speed
+	@No2Start:
+
+	btst    #(pad2_buttons_offset+pad_button_right), d7 ; Check right button
+	bne     @No2Right              ; Branch if button off
+	add.w   d6, ram_sprite_2_pos_x                ; Increment sprite X pos
+	@No2Right:
+
+	btst    #(pad2_buttons_offset+pad_button_left), d7  ; Check left button
+	bne     @No2Left               ; Branch if button off
+	sub.w   d6, ram_sprite_2_pos_x                ; Decrement sprite X pos
+	@No2Left:
+
+	btst    #(pad2_buttons_offset+pad_button_down), d7  ; Check down button
+	bne     @No2Down               ; Branch if button off
+	add.w   d6, ram_sprite_2_pos_y                ; Increment sprite Y pos
+	@No2Down:
+
+	btst    #(pad2_buttons_offset+pad_button_up), d7    ; Check up button
+	bne     @No2Up                 ; Branch if button off
+	sub.w   d6, ram_sprite_2_pos_y                ; Decrement sprite Y pos
+	@No2Up:
+
 
 	; Animate them (x/y coords are 9 bits, so this
 	; wraps around the whole 512x512 sprite plane)
-	addi.w #sprite_2_move_speed_x, d2
-	addi.w #sprite_2_move_speed_y, d3
+	;addi.w #sprite_2_move_speed_x, d2
+	;addi.w #sprite_2_move_speed_y, d3
 
 	; Store updated values back in RAM for next frame
 	;move.w d4, ram_sprite_1_pos_x
 	;move.w d5, ram_sprite_1_pos_y
-	move.w d2, ram_sprite_2_pos_x
-	move.w d3, ram_sprite_2_pos_y
+	;move.w d2, ram_sprite_2_pos_x
+	;move.w d3, ram_sprite_2_pos_y
 
 	; Write updated coordinates to the Sprite Attribute Table in VRAM.
 	; Each entry is 8 bytes in size, so sprite 1 is at table+0x0000,
@@ -449,12 +488,11 @@ INT_VInterrupt:
 
 	; Sprite 2's Y coordinate is at table+0x0008
 	SetVRAMWrite vram_addr_sprite_table+0x0008
-	move.w d3, vdp_data
+	move.w ram_sprite_2_pos_y, vdp_data
 
 	; Sprite 2's X coordinate is at table+0x000E
 	SetVRAMWrite vram_addr_sprite_table+0x000E
-	move.w d2, vdp_data
-
+	move.w ram_sprite_2_pos_x, vdp_data
 
 	rte
 

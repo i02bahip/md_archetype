@@ -123,7 +123,9 @@ ram_sprite_1_pos_x		rs.w 1	; 1 table entry of word size for sprite 1's X pos
 ram_sprite_1_pos_y		rs.w 1	; 1 table entry of word size for sprite 1's Y pos
 ram_sprite_2_pos_x		rs.w 1	; 1 table entry of word size for sprite 2's X pos
 ram_sprite_2_pos_y		rs.w 1	; 1 table entry of word size for sprite 2's Y pos
-joy1state				rs.w 1
+ram_joy1state			rs.l 1
+ram_sprite_1_2_speed	rs.w 1	; 1 table entry of word size for sprites 1 & 2 speed
+ram_vdp_control			rs.w 1	; 1 table entry of word size for VDP control
 
 ; !! Be careful when adding any table entries of BYTE size, since
 ; you'll need to start worrying about alignment. More of this in a
@@ -194,9 +196,11 @@ pad_button_up           equ 0x0
 pad_button_down         equ 0x1
 pad_button_left         equ 0x2
 pad_button_right        equ 0x3
-pad_button_a            equ 0x6;0xC
+pad_button_a            equ 0x6
 pad_button_b            equ 0x4
 pad_button_c            equ 0x5
-pad_button_start        equ 0x7;0xD
+pad_button_start        equ 0x7
+
+pad2_buttons_offset		equ 0x10
 
 ;==============================================================
